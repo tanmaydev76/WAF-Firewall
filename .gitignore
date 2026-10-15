@@ -1,0 +1,7 @@
+# Ignore compiled binary files
+*.class
+
+# Ignore Maven build output
+target/
+
+/.vscode
