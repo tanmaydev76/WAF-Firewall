@@ -29,10 +29,13 @@ public class TuringMachine {
         String newState = ruleBook.getNextState(currentState, inputAction);
 
         if (newState != null && !newState.equals("TAMPERED")) {
-            tape.write("V"); // 1. Mark current state as Visited
-            tape.moveRight(); // 2. Move read/write head right
-            tape.write(newState); // 3. Write the new state securely
-            currentState = newState; // 4. Update internal tracking
+            // Only write/move if state actually changes (Optimization)
+            if (!newState.equals(currentState)) {
+                tape.write("V");
+                tape.moveRight();
+                tape.write(newState);
+            }
+            currentState = newState;
         }
     }
 

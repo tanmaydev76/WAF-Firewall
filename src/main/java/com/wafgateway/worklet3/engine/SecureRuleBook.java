@@ -29,6 +29,18 @@ public class SecureRuleBook {
         initialRules.put(new TransitionKey("CART", "POST_PAY"), "PAY");
         initialRules.put(new TransitionKey("PAY", "POST_CHECKOUT"), "CONFIRM");
 
+        // Backward Navigation (Controlled Reset)
+        initialRules.put(new TransitionKey("AUTH", "GET_HOME"), "AUTH");
+        initialRules.put(new TransitionKey("CART", "GET_HOME"), "CART");
+        initialRules.put(new TransitionKey("PAY", "GET_HOME"), "PAY");
+        initialRules.put(new TransitionKey("CONFIRM", "GET_HOME"), "CONFIRM");
+        initialRules.put(new TransitionKey("CART", "DELETE_CART"), "AUTH");
+        initialRules.put(new TransitionKey("PAY", "CANCEL_PAY"), "CART");
+        initialRules.put(new TransitionKey("AUTH", "POST_LOGOUT"), "START");
+        initialRules.put(new TransitionKey("CART", "POST_LOGOUT"), "START");
+        initialRules.put(new TransitionKey("PAY", "POST_LOGOUT"), "START");
+        initialRules.put(new TransitionKey("CONFIRM", "POST_LOGOUT"), "START");
+
         // Security 1: Make the map immutable
         this.rules = Collections.unmodifiableMap(initialRules);
 
@@ -58,12 +70,17 @@ public class SecureRuleBook {
             }
             return hexString.toString();
         } catch (Exception e) {
-            throw new RuntimeException("SHA-256 initialization error", e);
+            startupHashSHA256 = "INVALID_HASH"; // Force verifyIntegrity() to return false
+            return "INVALID_HASH";
         }
     }
 
     private boolean verifyIntegrity() {
-        String currentHash = calculateHash();
-        return currentHash.equals(startupHashSHA256);
+        try {
+            String currentHash = calculateHash();
+            return currentHash.equals(startupHashSHA256);
+        } catch (Exception e) {
+            return false; // Fail secure: block the request, don't crash
+        }
     }
 }
