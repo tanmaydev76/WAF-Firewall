@@ -8,8 +8,12 @@ public class TuringMachine {
     private String currentState;
 
     public TuringMachine() {
+        this(new SecureRuleBook());
+    }
+
+    public TuringMachine(SecureRuleBook sharedRuleBook) {
         this.tape = new SecureTape();
-        this.ruleBook = new SecureRuleBook();
+        this.ruleBook = sharedRuleBook;
         this.currentState = "START";
     }
 

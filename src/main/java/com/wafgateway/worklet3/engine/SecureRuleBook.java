@@ -36,10 +36,6 @@ public class SecureRuleBook {
         initialRules.put(new TransitionKey("CONFIRM", "GET_HOME"), "CONFIRM");
         initialRules.put(new TransitionKey("CART", "DELETE_CART"), "AUTH");
         initialRules.put(new TransitionKey("PAY", "CANCEL_PAY"), "CART");
-        initialRules.put(new TransitionKey("AUTH", "POST_LOGOUT"), "START");
-        initialRules.put(new TransitionKey("CART", "POST_LOGOUT"), "START");
-        initialRules.put(new TransitionKey("PAY", "POST_LOGOUT"), "START");
-        initialRules.put(new TransitionKey("CONFIRM", "POST_LOGOUT"), "START");
 
         // Security 1: Make the map immutable
         this.rules = Collections.unmodifiableMap(initialRules);

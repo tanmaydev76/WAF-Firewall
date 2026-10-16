@@ -9,15 +9,17 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BackwardCompatibilityTest {
 
     private TuringMachine tm;
+    private SecureRuleBook ruleBook;
 
     @BeforeEach
     void setUp() {
-        tm = new TuringMachine();
+        ruleBook = new SecureRuleBook();
+        tm = new TuringMachine(ruleBook);
     }
 
     // ==========================================
     // 1. GET_HOME READ-ONLY TESTS (4)
-    // ==========================================atibil
+    // ==========================================
 
     @Test
     @DisplayName("BC_01: GET_HOME from AUTH should stay AUTH")

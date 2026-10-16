@@ -9,10 +9,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class EngineTest {
 
     private TuringMachine tm;
+    private SecureRuleBook ruleBook;
 
     @BeforeEach
     void setUp() {
-        tm = new TuringMachine();
+        ruleBook = new SecureRuleBook();
+        tm = new TuringMachine(ruleBook);
     }
 
     // ==========================================
