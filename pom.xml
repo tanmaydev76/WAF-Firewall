@@ -6,12 +6,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.wafgateway</groupId>
-    <artifactId>worklet1</artifactId>
+    <artifactId>Web-Application-Firewall</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>WAF Worklet 1 - RegEx &amp; DFA Engine</name>
-    <description>Automata-based attack detection for the Next-Gen WAF &amp; API Gateway Inspector</description>
+    <name>Web-Application-Firewall</name>
+    <description>Web-Application-Firewall - Secure the web server from different attack by different methods and concepts from the finite Automata and Formal Languages.</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
