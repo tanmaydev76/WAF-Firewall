@@ -48,8 +48,10 @@ void CYKTable::fill(const std::vector<Token>& tokens, const grammar::Grammar& gr
                     continue;
                 }
 
-                for (const auto& [leftSym, _lMatch] : leftCell.matches) {
-                    for (const auto& [rightSym, _rMatch] : rightCell.matches) {
+                for (const auto& leftEntry : leftCell.matches) {
+                    const auto& leftSym = leftEntry.first;
+                    for (const auto& rightEntry : rightCell.matches) {
+                        const auto& rightSym = rightEntry.first;
                         const auto& parents = grammar.getBinary(leftSym, rightSym);
 
                         for (const auto& parent : parents) {
