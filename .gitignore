@@ -1,7 +1,27 @@
-# Ignore compiled binary files
+# Compiled binaries - NEVER commit these
+*.exe
+*.o
+*.obj
 *.class
+*.dll
+*.so
+*.dylib
 
-# Ignore Maven build output
+# Build directories
+worklet2/build/
 target/
+*.jar
 
-/.vscode
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipdb
+*.pdb
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
