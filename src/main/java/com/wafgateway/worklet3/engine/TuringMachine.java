@@ -46,4 +46,12 @@ public class TuringMachine {
     public String getCurrentState() {
         return currentState;
     }
+
+    public SecureTape getTape() {
+        return tape;
+    }
+
+    public SecureRuleBook getRuleBook() {
+        return ruleBook;
+    }
 }
