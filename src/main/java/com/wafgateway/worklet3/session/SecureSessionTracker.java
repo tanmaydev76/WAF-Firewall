@@ -100,4 +100,12 @@ public class SecureSessionTracker {
     public String generateSignedSessionId(String rawId) {
         return tokenVerifier.generateSignedId(rawId);
     }
+
+    public SessionTracker getSessionTracker() {
+        return sessionTracker;
+    }
+
+    public SessionTokenVerifier getTokenVerifier() {
+        return tokenVerifier;
+    }
 }

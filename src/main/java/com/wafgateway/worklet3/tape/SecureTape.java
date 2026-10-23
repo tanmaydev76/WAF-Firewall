@@ -71,4 +71,43 @@ public class SecureTape {
             rawTape.write(encrypt("B"));
         }
     }
+
+    public Tape getRawTape() {
+        return rawTape;
+    }
+
+    public static class TapeCellSnapshot {
+        public final int index;
+        public final String cipherText;
+        public final String plainText;
+        public final boolean isHead;
+
+        public TapeCellSnapshot(int index, String cipherText, String plainText, boolean isHead) {
+            this.index = index;
+            this.cipherText = cipherText;
+            this.plainText = plainText;
+            this.isHead = isHead;
+        }
+    }
+
+    public java.util.List<TapeCellSnapshot> getTapeSnapshots() {
+        TapeNode ptr = rawTape.getCurrentNode();
+        TapeNode head = ptr;
+        if (ptr == null) {
+            return java.util.Collections.emptyList();
+        }
+        while (ptr.prev != null) {
+            ptr = ptr.prev;
+        }
+        java.util.List<TapeCellSnapshot> list = new java.util.ArrayList<>();
+        int idx = 0;
+        while (ptr != null) {
+            String rawVal = ptr.data;
+            String decrypted = decrypt(rawVal);
+            list.add(new TapeCellSnapshot(idx, rawVal, decrypted, ptr == head));
+            ptr = ptr.next;
+            idx++;
+        }
+        return list;
+    }
 }

@@ -48,4 +48,8 @@ public class Tape {
     public int getMaxLength() {
         return this.MAX_LENGTH;
     }
+
+    public TapeNode getCurrentNode() {
+        return this.currentNode;
+    }
 }

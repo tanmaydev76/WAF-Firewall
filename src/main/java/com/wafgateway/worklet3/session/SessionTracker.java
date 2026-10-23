@@ -142,4 +142,12 @@ public class SessionTracker {
         }
         return tm.getCurrentState();
     }
+
+    public TuringMachine getSessionMachine(String rawSessionId) {
+        return sessions.get(rawSessionId);
+    }
+
+    public ConcurrentHashMap<String, TuringMachine> getSessions() {
+        return sessions;
+    }
 }
