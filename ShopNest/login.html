@@ -1,0 +1,19 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ShopNest · Sign in</title><link rel="stylesheet" href="style.css"></head><body><div class="auth"><section class="visual"><div class="brand">shop<i>nest</i></div><div class="copy"><div class="eyebrow" style="color:#ffd166">YOUR EVERYDAY STORE</div><h1>Everything you want. One place.</h1><p>Shop electronics, gadgets and everyday essentials with a clean shopping experience built for your project.</p><div class="pills"><span>✓ Secure checkout</span><span>✓ Fast delivery</span><span>✓ Easy returns</span></div></div><small style="color:#92a1ae">Academic e-commerce prototype · 2026</small></section><section class="form-side"><div class="auth-card"><div class="logo" style="color:#17212b;font-size:35px;margin-bottom:28px">shop<i>nest</i></div><h2>Welcome back</h2><p class="sub">Sign in to continue shopping.</p><form id="loginForm"><div class="field"><label>Username</label><input id="username" placeholder="user123" required></div><div class="field"><label>Password</label><input id="password" type="password" placeholder="123" required></div><button class="primary full" type="submit">Sign in to ShopNest</button><p id="msg" class="message"></p></form><div class="demo"><b>Demo account</b><br>Username: user123 · Password: 123<br><br>Connected to <b>POST /api/login</b></div></div></section></div>
+    
+
+<script>
+const API_BASE_URL = "http://localhost:8080";
+const loginForm = document.getElementById("loginForm");
+const msg = document.getElementById("msg");
+loginForm.addEventListener("submit", async e => {
+  e.preventDefault(); const btn = loginForm.querySelector("button[type=submit]"); btn.disabled = true; msg.textContent = "Sending login request to server…"; msg.style.color = "#17212b";
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/login`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username: document.getElementById("username").value.trim(), password: document.getElementById("password").value }) });
+    const data = await response.json();
+    if (!response.ok || !data.success) throw new Error(data.message || "Login failed");
+    localStorage.setItem("shopnest_user", data.user.username); msg.textContent = "Login successful! Redirecting…"; msg.style.color = "green"; location.href = "home.html";
+  } catch (error) { msg.textContent = error.message.includes("fetch") ? "Cannot connect. Start the backend server first." : error.message; msg.style.color = "#d9363e"; btn.disabled = false; }
+});
+</script>
+
+</body></html>

@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "name": "Sony WH-1000XM5 Wireless Headphones",
+    "category": "Audio",
+    "price": 24990,
+    "old": 29990,
+    "image": "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=900&q=85",
+    "badge": "Best Seller"
+  },
+  {
+    "id": 2,
+    "name": "Galaxy Watch6 Classic",
+    "category": "Wearables",
+    "price": 22999,
+    "old": 32999,
+    "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=900&q=85",
+    "badge": "Deal"
+  },
+  {
+    "id": 3,
+    "name": "Keychron Mechanical Gaming Keyboard",
+    "category": "Computers",
+    "price": 7499,
+    "old": 8999,
+    "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=900&q=85",
+    "badge": "Top Rated"
+  },
+  {
+    "id": 4,
+    "name": "JBL Charge 5 Bluetooth Speaker",
+    "category": "Audio",
+    "price": 11999,
+    "old": 14999,
+    "image": "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=900&q=85",
+    "badge": "Deal"
+  },
+  {
+    "id": 5,
+    "name": "Urban Laptop Backpack 28L",
+    "category": "Accessories",
+    "price": 1699,
+    "old": 2499,
+    "image": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=900&q=85",
+    "badge": "Popular"
+  },
+  {
+    "id": 6,
+    "name": "GoPro Action Camera",
+    "category": "Cameras",
+    "price": 34999,
+    "old": 44999,
+    "image": "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=900&q=85",
+    "badge": "New"
+  },
+  {
+    "id": 7,
+    "name": "Anker PowerCore 20K Power Bank",
+    "category": "Mobiles",
+    "price": 2499,
+    "old": 2999,
+    "image": "https://images.unsplash.com/photo-1609592424896-4a7f4d6f7d4c?auto=format&fit=crop&w=900&q=85",
+    "badge": "Best Seller"
+  },
+  {
+    "id": 8,
+    "name": "Logitech MX Master Wireless Mouse",
+    "category": "Computers",
+    "price": 7999,
+    "old": 9999,
+    "image": "https://images.unsplash.com/photo-1527814050087-3793815479db?auto=format&fit=crop&w=900&q=85",
+    "badge": "Top Rated"
+  }
+]
