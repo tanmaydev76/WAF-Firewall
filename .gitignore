@@ -5,3 +5,9 @@
 target/
 
 /.vscode
+*.exe
+*.pdf
+W1_Integration_Guide.pdf
+W2_Refactoring_Guide.pdf
+W3_Gateway_Implementation_Guide.pdf
+worklet2/

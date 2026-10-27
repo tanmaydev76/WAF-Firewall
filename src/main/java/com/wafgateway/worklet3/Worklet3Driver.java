@@ -16,9 +16,12 @@ import java.util.Scanner;
  *
  * Demonstrates and invokes all layers of Worklet 3:
  * 1. Cryptographic Token Verification (SessionTokenVerifier - HMAC-SHA256)
- * 2. Session Management & Concurrency (SecureSessionTracker / SessionTracker - ConcurrentHashMap)
- * 3. Automata State Verification (TuringMachine & SecureRuleBook - SHA-256 Rule Hash)
- * 4. Encrypted Memory & Tape Execution (SecureTape - AES-128 & Doubly Linked List)
+ * 2. Session Management & Concurrency (SecureSessionTracker / SessionTracker -
+ * ConcurrentHashMap)
+ * 3. Automata State Verification (TuringMachine & SecureRuleBook - SHA-256 Rule
+ * Hash)
+ * 4. Encrypted Memory & Tape Execution (SecureTape - AES-128 & Doubly Linked
+ * List)
  */
 public class Worklet3Driver {
 
@@ -93,7 +96,8 @@ public class Worklet3Driver {
     }
 
     /**
-     * Interactively prompts user for Session ID and Action, then invokes all Worklet 3 layers.
+     * Interactively prompts user for Session ID and Action, then invokes all
+     * Worklet 3 layers.
      * Supports stepping through multiple consecutive actions for the same session.
      */
     private void handleManualInspection(Scanner scanner) {
@@ -149,7 +153,8 @@ public class Worklet3Driver {
             }
 
             System.out.println("\nSession '" + rawInput + "' is currently in State: [" + currState + "]");
-            System.out.println("Available Actions: POST_LOGIN, POST_CART, GET_CART, PUT_CART, POST_PAY, POST_CHECKOUT, GET_HOME, CANCEL_PAY, DELETE_CART, POST_LOGOUT");
+            System.out.println(
+                    "Available Actions: POST_LOGIN, POST_CART, GET_CART, PUT_CART, POST_PAY, POST_CHECKOUT, GET_HOME, CANCEL_PAY, DELETE_CART, POST_LOGOUT");
             System.out.print("Enter HTTP Action [default: " + defaultAction + "]: ");
             String action = scanner.nextLine().trim();
             if (action.isEmpty()) {
@@ -167,7 +172,8 @@ public class Worklet3Driver {
             // Check if full flow is complete
             TuringMachine updatedTm = baseTracker.getSessionMachine(rawInput);
             if (updatedTm != null && "CONFIRM".equals(updatedTm.getCurrentState())) {
-                System.out.println("\n*** SUCCESS: Full e-commerce cycle completed for session '" + rawInput + "'! ***");
+                System.out
+                        .println("\n*** SUCCESS: Full e-commerce cycle completed for session '" + rawInput + "'! ***");
             }
 
             System.out.print("\nSend next action for session '" + rawInput + "'? (Y/n) [default: Y]: ");
@@ -184,7 +190,8 @@ public class Worklet3Driver {
     private void handleInspectTape(Scanner scanner) {
         System.out.println("\n=== [OPTION 8: INSPECT ENCRYPTED TAPE CONTENT] ===");
         if (secureTracker.getActiveSessionCount() == 0) {
-            System.out.println("No active sessions currently tracked. Run a request or preset first (e.g., Option 1 or 2).");
+            System.out.println(
+                    "No active sessions currently tracked. Run a request or preset first (e.g., Option 1 or 2).");
             return;
         }
 
@@ -198,7 +205,8 @@ public class Worklet3Driver {
         }
 
         String defaultTarget = sessionList.get(sessionList.size() - 1);
-        System.out.print("\nEnter Session ID or Number [1-" + sessionList.size() + "] [default: " + defaultTarget + "]: ");
+        System.out.print(
+                "\nEnter Session ID or Number [1-" + sessionList.size() + "] [default: " + defaultTarget + "]: ");
         String inputId = scanner.nextLine().trim();
         if (inputId.isEmpty()) {
             inputId = defaultTarget;
@@ -231,12 +239,15 @@ public class Worklet3Driver {
     }
 
     /**
-     * Invokes all layers of Worklet 3 step-by-step and displays detailed diagnostics.
+     * Invokes all layers of Worklet 3 step-by-step and displays detailed
+     * diagnostics.
      *
      * @param signedSessionId Format: rawId.signature
      * @param action          HTTP action (e.g. POST_LOGIN, POST_CART)
-     * @param autoCommit      If true and Phase 1 passes, simulate backend 200 OK and commit
-     * @return true if request was allowed and successfully committed, false if blocked
+     * @param autoCommit      If true and Phase 1 passes, simulate backend 200 OK
+     *                        and commit
+     * @return true if request was allowed and successfully committed, false if
+     *         blocked
      */
     public boolean processRequest(String signedSessionId, String action, boolean autoCommit) {
         System.out.println("\n============================================================");
@@ -338,7 +349,8 @@ public class Worklet3Driver {
     }
 
     /**
-     * Displays a formatted visual diagram and encrypted RAM dump of the Turing Machine tape.
+     * Displays a formatted visual diagram and encrypted RAM dump of the Turing
+     * Machine tape.
      */
     public void printTapeVisualization(TuringMachine tm, String rawSessionId) {
         if (tm == null) {
@@ -349,8 +361,10 @@ public class Worklet3Driver {
         SecureTape secureTape = tm.getTape();
         List<SecureTape.TapeCellSnapshot> snapshots = secureTape.getTapeSnapshots();
 
-        System.out.println("\n  ================ [ENCRYPTED TAPE VISUALIZATION: " + rawSessionId + "] ================");
-        System.out.println("  Current State: " + tm.getCurrentState() + " | Total Allocated Cells: " + snapshots.size());
+        System.out
+                .println("\n  ================ [ENCRYPTED TAPE VISUALIZATION: " + rawSessionId + "] ================");
+        System.out
+                .println("  Current State: " + tm.getCurrentState() + " | Total Allocated Cells: " + snapshots.size());
         System.out.println();
 
         // 1. ASCII Tape Cells Box Representation
@@ -363,7 +377,8 @@ public class Worklet3Driver {
         for (SecureTape.TapeCellSnapshot snap : snapshots) {
             String label = "Cell " + snap.index;
             String val = snap.plainText;
-            String status = snap.isHead ? "[HEAD] *" : (val.equals("V") ? "(Visited)" : "");
+            String status = snap.isHead ? "[HEAD] *"
+                    : (val.equals("B") ? "(Blanked)" : (val.equals("START") ? "(Origin)" : ""));
 
             int width = Math.max(Math.max(label.length(), val.length()), status.length()) + 4;
             width = Math.max(width, 12);
@@ -398,8 +413,10 @@ public class Worklet3Driver {
     }
 
     private String center(String text, int width) {
-        if (text == null) text = "";
-        if (text.length() >= width) return text;
+        if (text == null)
+            text = "";
+        if (text.length() >= width)
+            return text;
         int left = (width - text.length()) / 2;
         int right = width - text.length() - left;
         return " ".repeat(left) + text + " ".repeat(right);
@@ -418,7 +435,8 @@ public class Worklet3Driver {
         processRequest(signedId, "POST_PAY", true);
         processRequest(signedId, "POST_CHECKOUT", true);
 
-        System.out.println("\n[SCENARIO RESULT]: User completed full purchase flow (START -> AUTH -> CART -> PAY -> CONFIRM)!");
+        System.out.println(
+                "\n[SCENARIO RESULT]: User completed full purchase flow (START -> AUTH -> CART -> PAY -> CONFIRM)!");
     }
 
     private void runPresetStateSkipAttack() {

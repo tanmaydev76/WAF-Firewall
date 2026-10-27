@@ -89,13 +89,14 @@ public class BackwardCompatibilityTest {
     }
 
     @Test
-    @DisplayName("BC_07: POST_LOGOUT from CART should go back to START")
+    @DisplayName("BC_07: POST_LOGOUT is blocked by TM (handled by SessionTracker)")
     void testLogoutFromCartGoesToStart() {
         tm.commit("POST_LOGIN");
         tm.commit("POST_CART");
-        assertTrue(tm.checkValid("POST_LOGOUT"));
-        tm.commit("POST_LOGOUT");
-        assertEquals("START", tm.getCurrentState());
+        // POST_LOGOUT is no longer a TM rule. It is handled by
+        // SessionTracker.clearSession()
+        assertFalse(tm.checkValid("POST_LOGOUT"), "TM should reject POST_LOGOUT (Default Deny)");
+        assertEquals("CART", tm.getCurrentState(), "State should remain CART");
     }
 
     // ==========================================
@@ -171,7 +172,8 @@ public class BackwardCompatibilityTest {
     @Test
     @DisplayName("BC_14: POST_LOGOUT from START should be BLOCKED")
     void testLogoutFromStartBlocked() {
-        assertFalse(tm.checkValid("POST_LOGOUT"), "Cannot logout if not logged in");
+        // POST_LOGOUT is not a valid TM rule from any state (handled by SessionTracker)
+        assertFalse(tm.checkValid("POST_LOGOUT"), "TM rejects POST_LOGOUT");
     }
 
     // ==========================================
@@ -223,33 +225,27 @@ public class BackwardCompatibilityTest {
     }
 
     @Test
-    @DisplayName("BC_17: Logout from every state returns to START")
+    @DisplayName("BC_17: POST_LOGOUT is ignored by TM (state remains unchanged)")
     void testLogoutFromEveryState() {
         // From AUTH
         tm.commit("POST_LOGIN");
-        tm.commit("POST_LOGOUT");
-        assertEquals("START", tm.getCurrentState());
+        tm.commit("POST_LOGOUT"); // Ignored by TM
+        assertEquals("AUTH", tm.getCurrentState());
 
         // From CART
-        tm.commit("POST_LOGIN");
         tm.commit("POST_CART");
-        tm.commit("POST_LOGOUT");
-        assertEquals("START", tm.getCurrentState());
+        tm.commit("POST_LOGOUT"); // Ignored by TM
+        assertEquals("CART", tm.getCurrentState());
 
         // From PAY
-        tm.commit("POST_LOGIN");
-        tm.commit("POST_CART");
         tm.commit("POST_PAY");
-        tm.commit("POST_LOGOUT");
-        assertEquals("START", tm.getCurrentState());
+        tm.commit("POST_LOGOUT"); // Ignored by TM
+        assertEquals("PAY", tm.getCurrentState());
 
         // From CONFIRM
-        tm.commit("POST_LOGIN");
-        tm.commit("POST_CART");
-        tm.commit("POST_PAY");
         tm.commit("POST_CHECKOUT");
-        tm.commit("POST_LOGOUT");
-        assertEquals("START", tm.getCurrentState());
+        tm.commit("POST_LOGOUT"); // Ignored by TM
+        assertEquals("CONFIRM", tm.getCurrentState());
     }
 
     // ==========================================
@@ -340,7 +336,7 @@ public class BackwardCompatibilityTest {
         tests.put("BC_04: GET_HOME from CONFIRM", () -> suite.testGetHomeFromConfirm());
         tests.put("BC_05: DELETE_CART from CART", () -> suite.testDeleteCartGoesBackToAuth());
         tests.put("BC_06: CANCEL_PAY from PAY", () -> suite.testCancelPayGoesBackToCart());
-        tests.put("BC_07: POST_LOGOUT from CART", () -> suite.testLogoutFromCartGoesToStart());
+        tests.put("BC_07: POST_LOGOUT blocked by TM", () -> suite.testLogoutFromCartGoesToStart());
         tests.put("BC_08: GET_HOME does not advance tape", () -> suite.testGetHomeDoesNotAdvanceTape());
         tests.put("BC_09: GET_CART does not advance tape", () -> suite.testGetCartDoesNotAdvanceTape());
         tests.put("BC_10: DELETE_CART from PAY blocked", () -> suite.testDeleteCartFromPayBlocked());
@@ -351,7 +347,7 @@ public class BackwardCompatibilityTest {
         tests.put("BC_15: Full forward-backward-forward workflow",
                 () -> suite.testFullForwardBackwardForwardWorkflow());
         tests.put("BC_16: Pay -> Cancel Pay -> Pay again -> Checkout", () -> suite.testPayCancelPayAgainCheckout());
-        tests.put("BC_17: Logout from every state", () -> suite.testLogoutFromEveryState());
+        tests.put("BC_17: POST_LOGOUT ignored by TM", () -> suite.testLogoutFromEveryState());
         tests.put("BC_18: Tampered rulebook fail-secure", () -> suite.testTamperedRulebookReturnsTamperedNotCrash());
         tests.put("BC_19: Invalid action after valid workflow", () -> suite.testInvalidActionAfterValidWorkflow());
         tests.put("BC_20: Multiple GET_HOME calls", () -> suite.testMultipleGetHomeCalls());
