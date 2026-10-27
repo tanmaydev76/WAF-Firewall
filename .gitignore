@@ -18,6 +18,7 @@ target/
 *.iml
 *.ipdb
 *.pdb
+*.pdf
 
 # OS files
 Thumbs.db
