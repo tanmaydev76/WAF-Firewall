@@ -33,13 +33,24 @@ public class TuringMachine {
         String newState = ruleBook.getNextState(currentState, inputAction);
 
         if (newState != null && !newState.equals("TAMPERED")) {
-            // Only write/move if state actually changes (Optimization)
-            if (!newState.equals(currentState)) {
-                tape.write("V");
-                tape.moveRight();
-                tape.write(newState);
+            String[] parts = newState.split(":");
+            String state = parts[0];
+            String direction = parts.length > 1 ? parts[1] : "RIGHT";
+
+            switch (direction) {
+                case "RIGHT":
+                    tape.moveRight();
+                    tape.write(state);
+                    break;
+                case "LEFT":
+                    tape.write("B");
+                    tape.moveLeft();
+                    break;
+                case "STAY":
+                    // No tape movement
+                    break;
             }
-            currentState = newState;
+            currentState = state;
         }
     }
 

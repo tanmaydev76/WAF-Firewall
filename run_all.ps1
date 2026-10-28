@@ -21,14 +21,31 @@ Write-Host "`n================================================================="
 Write-Host " STEP 2: RUNNING INTEGRATED PIPELINE (WORKLET 1 -> 2 -> 3)       " -ForegroundColor Cyan
 Write-Host "=================================================================" -ForegroundColor Cyan
 
-$env:JAVA_HOME = "C:\Program Files\JetBrains\IntelliJ IDEA 2025.3.1\jbr"
-$java = "C:\Program Files\JetBrains\IntelliJ IDEA 2025.3.1\jbr\bin\java.exe"
-$mvn = "C:\Program Files\JetBrains\IntelliJ IDEA 2025.3.1\plugins\maven\lib\maven3\bin\mvn.cmd"
-
+# Locate Java & JDK
+$java = "C:\Program Files\Java\jdk-17\bin\java.exe"
+if (-not (Test-Path $java)) {
+    $java = "C:\Program Files\JetBrains\IntelliJ IDEA 2026.1\jbr\bin\java.exe"
+}
 if (-not (Test-Path $java)) {
     $javaCmd = Get-Command java -ErrorAction SilentlyContinue
     if ($javaCmd) { $java = $javaCmd.Source }
 }
+
+if (Test-Path "C:\Program Files\Java\jdk-17") {
+    $env:JAVA_HOME = "C:\Program Files\Java\jdk-17"
+} elseif (Test-Path "C:\Program Files\JetBrains\IntelliJ IDEA 2026.1\jbr") {
+    $env:JAVA_HOME = "C:\Program Files\JetBrains\IntelliJ IDEA 2026.1\jbr"
+}
+
+# Locate Maven
+$mvn = "C:\Program Files\JetBrains\IntelliJ IDEA 2026.1\plugins\maven\lib\maven3\bin\mvn.cmd"
+if (-not (Test-Path $mvn)) {
+    $mvnCmd = Get-Command mvn -ErrorAction SilentlyContinue
+    if ($mvnCmd) { $mvn = $mvnCmd.Source }
+}
+
+Write-Host "Using Java : $java" -ForegroundColor Gray
+Write-Host "Using Maven: $mvn" -ForegroundColor Gray
 
 Write-Host "`nCompiling Java project..." -ForegroundColor Yellow
 & $mvn compile -q

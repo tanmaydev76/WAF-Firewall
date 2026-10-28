@@ -13,29 +13,34 @@ public class SecureRuleBook {
         HashMap<TransitionKey, String> initialRules = new HashMap<>();
 
         // ==========================================
-        // PRE-FILLING ONLY VALID RULES (HTTP Method + Endpoint)
+        // 1. FORWARD NAVIGATION (RIGHT)
+        // Move right, write new state
         // ==========================================
+        initialRules.put(new TransitionKey("START", "POST_LOGIN"), "AUTH:RIGHT");
+        initialRules.put(new TransitionKey("AUTH", "POST_CART"), "CART:RIGHT");
+        initialRules.put(new TransitionKey("CART", "POST_PAY"), "PAY:RIGHT");
+        initialRules.put(new TransitionKey("PAY", "POST_CHECKOUT"), "CONFIRM:RIGHT");
 
-        // 1. Authentication Flow
-        initialRules.put(new TransitionKey("START", "POST_LOGIN"), "AUTH");
+        // ==========================================
+        // 2. BACKWARD NAVIGATION (LEFT)
+        // Blank current cell, move left
+        // newState must be the PREVIOUS state!
+        // ==========================================
+        initialRules.put(new TransitionKey("CART", "DELETE_CART"), "AUTH:LEFT");
+        initialRules.put(new TransitionKey("PAY", "CANCEL_PAY"), "CART:LEFT");
 
-        // 2. Cart Management
-        initialRules.put(new TransitionKey("AUTH", "POST_CART"), "CART");
-        initialRules.put(new TransitionKey("AUTH", "GET_CART"), "AUTH"); // Allowed, no state change
-        initialRules.put(new TransitionKey("CART", "GET_CART"), "CART"); // Allowed, no state change
-        initialRules.put(new TransitionKey("CART", "PUT_CART"), "CART"); // Allowed, no state change
-
-        // 3. Checkout Flow (Strictly linear)
-        initialRules.put(new TransitionKey("CART", "POST_PAY"), "PAY");
-        initialRules.put(new TransitionKey("PAY", "POST_CHECKOUT"), "CONFIRM");
-
-        // Backward Navigation (Controlled Reset)
-        initialRules.put(new TransitionKey("AUTH", "GET_HOME"), "AUTH");
-        initialRules.put(new TransitionKey("CART", "GET_HOME"), "CART");
-        initialRules.put(new TransitionKey("PAY", "GET_HOME"), "PAY");
-        initialRules.put(new TransitionKey("CONFIRM", "GET_HOME"), "CONFIRM");
-        initialRules.put(new TransitionKey("CART", "DELETE_CART"), "AUTH");
-        initialRules.put(new TransitionKey("PAY", "CANCEL_PAY"), "CART");
+        // ==========================================
+        // 3. READ-ONLY ACTIONS (STAY)
+        // No tape movement, no state change
+        // ==========================================
+        initialRules.put(new TransitionKey("AUTH", "GET_CART"), "AUTH:STAY");
+        initialRules.put(new TransitionKey("CART", "GET_CART"), "CART:STAY");
+        initialRules.put(new TransitionKey("CART", "PUT_CART"), "CART:STAY");
+        initialRules.put(new TransitionKey("AUTH", "GET_HOME"), "AUTH:STAY");
+        initialRules.put(new TransitionKey("CART", "GET_HOME"), "CART:STAY");
+        initialRules.put(new TransitionKey("PAY", "GET_HOME"), "PAY:STAY");
+        initialRules.put(new TransitionKey("CONFIRM", "GET_HOME"), "CONFIRM:STAY");
+        initialRules.put(new TransitionKey("CONFIRM", "GET_RECEIPT"), "CONFIRM:STAY");
 
         // Security 1: Make the map immutable
         this.rules = Collections.unmodifiableMap(initialRules);
@@ -45,13 +50,11 @@ public class SecureRuleBook {
     }
 
     public String getNextState(String currentState, String inputAction) {
-        // Security 3: Verify rules haven't been tampered with in RAM
         if (!verifyIntegrity()) {
             return "TAMPERED";
         }
-
         TransitionKey key = new TransitionKey(currentState, inputAction);
-        return rules.get(key); // Returns null if not found (Default Deny)
+        return rules.get(key);
     }
 
     private String calculateHash() {
@@ -59,15 +62,13 @@ public class SecureRuleBook {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             String rulesString = rules.toString();
             byte[] hashBytes = digest.digest(rulesString.getBytes());
-
             StringBuilder hexString = new StringBuilder();
             for (byte b : hashBytes) {
                 hexString.append(String.format("%02x", b));
             }
             return hexString.toString();
         } catch (Exception e) {
-            startupHashSHA256 = "INVALID_HASH"; // Force verifyIntegrity() to return false
-            return "INVALID_HASH";
+            return "HASH_ERROR_" + System.currentTimeMillis();
         }
     }
 
@@ -76,7 +77,7 @@ public class SecureRuleBook {
             String currentHash = calculateHash();
             return currentHash.equals(startupHashSHA256);
         } catch (Exception e) {
-            return false; // Fail secure: block the request, don't crash
+            return false;
         }
     }
 }

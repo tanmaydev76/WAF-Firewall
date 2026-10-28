@@ -8,7 +8,8 @@ set TARGET_URL=http://localhost:3000
 if not "%~1"=="" set PROXY_PORT=%~1
 if not "%~2"=="" set TARGET_URL=%~2
 
-set JAVA="C:\Program Files\JetBrains\IntelliJ IDEA 2025.3.1\jbr\bin\java.exe"
+set JAVA="C:\Program Files\Java\jdk-17\bin\java.exe"
+if not exist %JAVA% set JAVA="C:\Program Files\JetBrains\IntelliJ IDEA 2026.1\jbr\bin\java.exe"
 if not exist %JAVA% set JAVA=java
 
 echo =================================================================
