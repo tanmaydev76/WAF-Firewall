@@ -18,4 +18,4 @@ echo   Proxy Port     : http://localhost:%PROXY_PORT%
 echo   Target Website : %TARGET_URL%
 echo =================================================================
 
-%JAVA% -cp "target/classes" com.wafgateway.worklet3.WAFProxyServer --port %PROXY_PORT% --target %TARGET_URL%
+%JAVA% -cp "target/classes" com.wafgateway.proxy.WafReverseProxyServer --port %PROXY_PORT% --target %TARGET_URL%

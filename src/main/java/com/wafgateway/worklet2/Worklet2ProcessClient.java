@@ -17,7 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Client that invokes the C++ Worklet 2 binary (CYK Grammar Parser & Structural Validator)
+ * Client that invokes the C++ Worklet 2 binary (CYK Grammar Parser & Structural
+ * Validator)
  * through standard IPC/pipes, with an integrated fallback evaluator.
  */
 public class Worklet2ProcessClient {
@@ -34,9 +35,9 @@ public class Worklet2ProcessClient {
 
     private static String findBinaryPath() {
         String[] candidates = {
-            "worklet2/worklet2_demo.exe",
-            "worklet2/worklet2_demo",
-            "../worklet2/worklet2_demo.exe"
+                "worklet2/worklet2_demo.exe",
+                "worklet2/worklet2_demo",
+                "../worklet2/worklet2_demo.exe"
         };
         for (String c : candidates) {
             if (Files.exists(Path.of(c))) {
@@ -51,7 +52,8 @@ public class Worklet2ProcessClient {
             return Worklet2Result.rejected(sessionId, "EMPTY_INPUT", "Reject Reason: Token stream is empty.");
         }
         if (tokens.size() > 500) {
-            return Worklet2Result.rejected(sessionId, "TOKEN_LIMIT_EXCEEDED", "Reject Reason: Token limit exceeded (Potential JSON bomb attack).");
+            return Worklet2Result.rejected(sessionId, "TOKEN_LIMIT_EXCEEDED",
+                    "Reject Reason: Token limit exceeded (Potential JSON bomb attack).");
         }
 
         // Attempt invocation of native Worklet 2 C++ engine
@@ -66,14 +68,15 @@ public class Worklet2ProcessClient {
         return evaluateJavaFallback(sessionId, httpMethod, tokens);
     }
 
-    private Worklet2Result executeNative(String sessionId, String httpMethod, List<Token> tokens) throws IOException, InterruptedException {
+    private Worklet2Result executeNative(String sessionId, String httpMethod, List<Token> tokens)
+            throws IOException, InterruptedException {
         String tokenJson = TokenBridge.tokensToJson(tokens);
+        System.out.println("tokenJson: " + tokenJson);
         ProcessBuilder pb = new ProcessBuilder(
                 binaryPath,
                 "--pipe",
                 sessionId != null ? sessionId : "anon",
-                httpMethod != null ? httpMethod : "POST"
-        );
+                httpMethod != null ? httpMethod : "POST");
         Process proc = pb.start();
 
         try (OutputStream os = proc.getOutputStream()) {
@@ -86,7 +89,8 @@ public class Worklet2ProcessClient {
 
         boolean success = output.contains("\"success\": true");
         String action = extractField(output, "action");
-        // Normalize to uppercase so it matches TM rule keys (POST_LOGIN, POST_CART, etc.)
+        // Normalize to uppercase so it matches TM rule keys (POST_LOGIN, POST_CART,
+        // etc.)
         if (action != null && !action.isEmpty()) {
             action = action.toUpperCase();
         }
@@ -122,15 +126,18 @@ public class Worklet2ProcessClient {
             if (t.type() == TokenType.LBRACE) {
                 stack.push(TokenType.LBRACE);
                 depth++;
-                if (depth > maxDepth) maxDepth = depth;
+                if (depth > maxDepth)
+                    maxDepth = depth;
             } else if (t.type() == TokenType.RBRACE) {
                 if (stack.isEmpty() || stack.pop() != TokenType.LBRACE) {
-                    return Worklet2Result.rejected(sessionId, "TAG_MISMATCH", "Structural Tag Mismatch: Unbalanced braces detected.");
+                    return Worklet2Result.rejected(sessionId, "TAG_MISMATCH",
+                            "Structural Tag Mismatch: Unbalanced braces detected.");
                 }
                 depth--;
             }
 
-            if (t.type() == TokenType.STRING && ("action".equalsIgnoreCase(t.value()) || "\"action\"".equalsIgnoreCase(t.value()))) {
+            if (t.type() == TokenType.STRING
+                    && ("action".equalsIgnoreCase(t.value()) || "\"action\"".equalsIgnoreCase(t.value()))) {
                 if (i + 2 < tokens.size() && tokens.get(i + 1).type() == TokenType.COLON) {
                     Token valTok = tokens.get(i + 2);
                     String val = valTok.value();
@@ -143,10 +150,12 @@ public class Worklet2ProcessClient {
         }
 
         if (!stack.isEmpty()) {
-            return Worklet2Result.rejected(sessionId, "TAG_MISMATCH", "Structural Tag Mismatch: Unbalanced braces detected.");
+            return Worklet2Result.rejected(sessionId, "TAG_MISMATCH",
+                    "Structural Tag Mismatch: Unbalanced braces detected.");
         }
         if (maxDepth > 3) {
-            return Worklet2Result.rejected(sessionId, "DEPTH_EXCEEDED", "Security Error: JSON nesting depth exceeded MAX_DEPTH limit.");
+            return Worklet2Result.rejected(sessionId, "DEPTH_EXCEEDED",
+                    "Security Error: JSON nesting depth exceeded MAX_DEPTH limit.");
         }
 
         // Normalize to uppercase to match TM rule keys (e.g. POST_LOGIN, GET_CART)

@@ -48,6 +48,14 @@ public final class ActionExtractor {
         String m = method.toUpperCase().trim();
         String p = path.toLowerCase().trim();
 
+        // Static bypass routes (public / health / assets)
+        if (p.equals("/favicon.ico") || p.equals("/health") || p.startsWith("/public/"))
+            return "GET_STATIC";
+
+        // Home routes
+        if (p.equals("/") || p.equals("/api/home"))
+            return "GET_HOME";
+
         // Exact endpoint action mappings from W3 State Machine Guide
         if (p.equals("/api/login") && m.equals("POST"))
             return "POST_LOGIN";

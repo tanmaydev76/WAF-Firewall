@@ -17,7 +17,7 @@ public class SessionTracker {
     public SessionTracker() {
         this.sessions = new ConcurrentHashMap<>();
         this.sharedRuleBook = new SecureRuleBook();
-        this.MAX_SESSIONS = 10000;
+        this.MAX_SESSIONS = 1000;
     }
 
     public SessionTracker(int maxSessions) {

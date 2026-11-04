@@ -13,9 +13,10 @@ $ErrorActionPreference = "Stop"
 $workspaceRoot = $PSScriptRoot
 Set-Location $workspaceRoot
 
-$env:JAVA_HOME = "C:\Program Files\JetBrains\IntelliJ IDEA 2025.3.1\jbr"
-$java = "C:\Program Files\JetBrains\IntelliJ IDEA 2025.3.1\jbr\bin\java.exe"
-
+$java = "C:\Program Files\Java\jdk-17\bin\java.exe"
+if (-not (Test-Path $java)) {
+    $java = "C:\Program Files\JetBrains\IntelliJ IDEA 2026.1\jbr\bin\java.exe"
+}
 if (-not (Test-Path $java)) {
     $javaCmd = Get-Command java -ErrorAction SilentlyContinue
     if ($javaCmd) { $java = $javaCmd.Source }
@@ -25,4 +26,4 @@ Write-Host "Starting WAF Reverse Proxy..." -ForegroundColor Cyan
 Write-Host "Listening on Port : http://localhost:$ProxyPort" -ForegroundColor Yellow
 Write-Host "Target Website    : $TargetUrl" -ForegroundColor Yellow
 
-& $java -cp "target/classes" com.wafgateway.worklet3.WAFProxyServer --port $ProxyPort --target $TargetUrl
+& $java -cp "target/classes" com.wafgateway.proxy.WafReverseProxyServer --port $ProxyPort --target $TargetUrl

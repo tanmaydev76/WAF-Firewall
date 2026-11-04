@@ -2,7 +2,7 @@ package com.wafgateway.worklet3.session;
 
 /**
  * Security wrapper — adds HMAC validation to SessionTracker.
- * This is the ENTRY POINT that WAFProxyServer calls.
+ * This is the ENTRY POINT that IntegratedPipeline / WafReverseProxyServer calls.
  *
  * Pattern: Similar to SecureTape wrapping Tape.
  */
